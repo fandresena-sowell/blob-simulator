@@ -8,7 +8,7 @@
 
 ## Core Slime Simulation
 - [x] Implement slime DNA/genetics system (traits like color, size, speed, etc.)
-- [ ] Add random slime spawning mechanism
+- [x] Add random slime spawning mechanism
 - [ ] Create food resources that slimes can consume
 - [ ] Implement energy system (slimes need to eat to survive)
 - [ ] Add slime reproduction (when they have enough energy)

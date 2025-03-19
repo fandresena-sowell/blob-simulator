@@ -1,7 +1,10 @@
 import { SlimeDNA } from '../../../src/genetics/slime-dna';
 import { Color } from 'excalibur';
-
+import { Random } from '../../../src/utils/random';
 describe('SlimeDNA', () => {
+  beforeEach(() => {
+    Random.init('test-seed');
+  });
   // Test DNA generation
   describe('DNA Creation', () => {
     test('createRandom should generate valid SlimeDNA', () => {

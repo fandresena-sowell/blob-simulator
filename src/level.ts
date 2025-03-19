@@ -5,50 +5,66 @@ import {
   Scene,
   SceneActivationContext,
   vec,
+  Color,
+  Text,
+  Actor,
+  Font,
+  FontUnit,
 } from "excalibur";
 import { Slime } from "./actors/slime";
-import { SlimeDNA } from "./genetics/slime-dna";
-import { Random } from "./utils/random";
+import { SlimeSpawner, SpawnConfig } from "./genetics/slime-spawner";
 
 export class MyLevel extends Scene {
   private slimes: Slime[] = [];
+  private slimeSpawner!: SlimeSpawner; // Using definite assignment assertion
+  private spawnConfig: SpawnConfig = {
+    initialPopulation: 20,
+    spawnRate: 0.2, // 1 slime every 5 seconds
+    maxPopulation: 100,
+    spawnAreaPadding: 0.1,
+  };
+  private populationTextActor!: Actor;
 
   override onInitialize(engine: Engine): void {
-    // Create slimes with random DNA
-    for (let i = 0; i < 20; i++) {
-      let validPosition = false;
-      let randomX, randomY;
-
-      // Keep trying positions until we find one with no collisions
-      while (!validPosition) {
-        randomX =
-          Random.random() * engine.drawWidth * 0.8 + engine.drawWidth * 0.1;
-        randomY =
-          Random.random() * engine.drawHeight * 0.8 + engine.drawHeight * 0.1;
-
-        // Check distance from all existing slimes
-        validPosition = true;
-        for (const existingSlime of this.slimes) {
-          const dx = existingSlime.pos.x - randomX;
-          const dy = existingSlime.pos.y - randomY;
-          const distance = Math.sqrt(dx * dx + dy * dy);
-
-          // If too close to another slime, try a new position
-          if (distance < 30) {
-            // minimum distance between slimes
-            validPosition = false;
-            break;
-          }
-        }
-      }
-      const slime = new Slime(SlimeDNA.createRandom());
-      slime.pos = vec(randomX!, randomY!);
-
-      // All slimes are idle by default
-      slime.stopMoving();
+    // Initialize the slime spawner
+    this.slimeSpawner = new SlimeSpawner(engine, this.spawnConfig);
+    
+    // Create population text display
+    this.createPopulationDisplay();
+    
+    // Create initial population of slimes
+    const initialSlimes = this.slimeSpawner.initialize();
+    
+    // Add all initial slimes to the scene
+    initialSlimes.forEach(slime => {
       this.slimes.push(slime);
       this.add(slime);
-    }
+    });
+    
+    // Update the population text
+    this.updatePopulationText();
+  }
+
+  /**
+   * Create the population display UI element
+   */
+  private createPopulationDisplay(): void {
+    const populationText = new Text({
+      text: `Slimes: 0/0`,
+      font: new Font({
+        family: 'Arial',
+        size: 16,
+        unit: FontUnit.Px,
+      }),
+      color: Color.White,
+    });
+    
+    this.populationTextActor = new Actor({
+      pos: vec(100, 20),
+    });
+    
+    this.populationTextActor.graphics.use(populationText);
+    this.add(this.populationTextActor);
   }
 
   override onPreLoad(loader: DefaultLoader): void {
@@ -68,8 +84,24 @@ export class MyLevel extends Scene {
   }
 
   override onPostUpdate(engine: Engine, elapsedMs: number): void {
-    // Future AI behavior will be implemented here
-    // Currently, slimes don't move on their own
+    // Spawn new slimes based on configured spawn rate
+    const newSlimes = this.slimeSpawner.update(elapsedMs);
+    
+    // Add any new slimes to the scene
+    newSlimes.forEach(slime => {
+      this.slimes.push(slime);
+      this.add(slime);
+      
+      // Optional: Add a visual spawning effect
+      this.addSpawnEffect(slime);
+    });
+    
+    // Update the population display if new slimes were added
+    if (newSlimes.length > 0) {
+      this.updatePopulationText();
+    }
+    
+    // Future: Implement slime AI behavior
   }
 
   override onPreDraw(ctx: ExcaliburGraphicsContext, elapsedMs: number): void {
@@ -78,5 +110,61 @@ export class MyLevel extends Scene {
 
   override onPostDraw(ctx: ExcaliburGraphicsContext, elapsedMs: number): void {
     // Called after Excalibur draws to the screen
+  }
+  
+  /**
+   * Update the population text display
+   */
+  private updatePopulationText(): void {
+    const text = this.populationTextActor.graphics.current as Text;
+    text.text = `Slimes: ${this.slimeSpawner.getPopulation()}/${this.spawnConfig.maxPopulation}`;
+  }
+  
+  /**
+   * Add a visual effect when a new slime spawns
+   */
+  private addSpawnEffect(slime: Slime): void {
+    // Future enhancement: Add particles or animation effect
+    // For now, just scale the slime up from 0
+    const originalScale = slime.scale.clone();
+    slime.scale = vec(0, 0);
+    
+    // Simple grow animation
+    const growTime = 500; // ms
+    const startTime = Date.now();
+    
+    const growInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const progress = Math.min(elapsed / growTime, 1);
+      
+      slime.scale = vec(
+        originalScale.x * progress,
+        originalScale.y * progress
+      );
+      
+      if (progress >= 1) {
+        clearInterval(growInterval);
+      }
+    }, 16); // ~60fps
+  }
+  
+  /**
+   * Handle the death of a slime
+   */
+  public removeSlime(slime: Slime): void {
+    // Remove from spawner tracking
+    this.slimeSpawner.removeSlime(slime);
+    
+    // Remove from our local tracking
+    const index = this.slimes.indexOf(slime);
+    if (index !== -1) {
+      this.slimes.splice(index, 1);
+    }
+    
+    // Remove from scene
+    slime.kill();
+    
+    // Update the population display
+    this.updatePopulationText();
   }
 }

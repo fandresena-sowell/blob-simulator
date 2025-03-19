@@ -1,6 +1,7 @@
 import { Slime, SlimeDirection } from '../../../src/actors/slime';
 import { SlimeDNA } from '../../../src/genetics/slime-dna';
 import { Color } from 'excalibur';
+import { Random } from '../../../src/utils/random';
 
 // Mock Excalibur classes that Slime depends on
 jest.mock('excalibur', () => {
@@ -57,6 +58,9 @@ jest.mock('../../../src/resources', () => ({
 }));
 
 describe('Slime', () => {
+  beforeEach(() => {
+    Random.init('test-seed');
+  });
   describe('DNA Trait Expression', () => {
     test('slime should apply size from DNA', () => {
       // Create DNA with specific size

@@ -23,6 +23,8 @@ npm create excalibur
 - Slimes with genetic traits that affect appearance and behavior
 - Random slime generation with DNA-based traits
 - Visual trait expression (color, size, speed)
+- Automatic slime spawning with configurable parameters
+- Population management and growth visualization
 - Test harness for visualizing different slime traits (press 'T' in game)
 
 ## Testing Framework
@@ -63,3 +65,23 @@ A built-in test harness can be activated by pressing 'T' while the game is runni
 ## Documentation
 
 - DNA trait visual guide: [docs/slime-dna-visual-guide.md](docs/slime-dna-visual-guide.md)
+- Slime spawning system: [docs/slime-spawner.md](docs/slime-spawner.md)
+
+## Configuration
+
+The simulation includes several configurable parameters:
+
+### Slime Spawning Configuration
+
+You can customize the slime spawning behavior by modifying the `spawnConfig` in `src/level.ts`:
+
+```typescript
+private spawnConfig: SpawnConfig = {
+  initialPopulation: 20,   // Initial number of slimes
+  spawnRate: 0.2,          // Slimes per second (1 every 5 seconds)
+  maxPopulation: 100,      // Maximum allowed slimes
+  spawnAreaPadding: 0.1,   // % of screen edges to avoid when spawning
+};
+```
+
+See [docs/slime-spawner.md](docs/slime-spawner.md) for more details on the spawning system.
