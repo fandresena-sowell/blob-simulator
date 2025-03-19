@@ -13,6 +13,7 @@ import { defineConfig, devices } from '@playwright/test';
  */
 export default defineConfig({
   testDir: './tests',
+  testMatch: '*.spec.ts',
   webServer: {
     command: 'npm run serve',
     timeout: 240 * 1000, // linux takes a long time

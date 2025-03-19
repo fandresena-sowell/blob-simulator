@@ -1,25 +1,35 @@
+/**
+ * Slime actor for the blob simulation.
+ * This module defines the main character controlled in the game.
+ */
 import {
   Actor,
   Animation,
-  Collider,
-  CollisionContact,
   Engine,
-  Keys,
-  Side,
   Sprite,
   SpriteSheet,
-  vec,
+  vec
 } from "excalibur";
 import { Resources } from "../resources";
+import { SlimeDNA } from "../genetics/slime-dna";
 
-type Direction = Keys.Up | Keys.Right | Keys.Down | Keys.Left;
+// Define directions without using keyboard keys
+export enum SlimeDirection {
+  Up,
+  Right,
+  Down,
+  Left
+}
 
 export class Slime extends Actor {
-  protected animations: Record<Direction, Animation>;
-  protected idles: Record<Direction, Sprite>;
-  protected currentDirection: Direction = Keys.Down;
-  protected isSprinting = false;
-  constructor() {
+  protected animations: Record<SlimeDirection, Animation>;
+  protected idles: Record<SlimeDirection, Sprite>;
+  protected currentDirection: SlimeDirection = SlimeDirection.Down;
+  protected isMoving = false;
+  protected dna: SlimeDNA;
+  protected baseSpeed: number = 50;
+
+  constructor(dna?: SlimeDNA) {
     super({
       name: "Slime",
       pos: vec(150, 150),
@@ -27,6 +37,9 @@ export class Slime extends Actor {
       height: 24,
       scale: vec(1, 1),
     });
+
+    // Use provided DNA or create random DNA
+    this.dna = dna || SlimeDNA.createRandom();
 
     const sheet = SpriteSheet.fromImageSource({
       image: Resources.Slime,
@@ -43,90 +56,112 @@ export class Slime extends Actor {
     const leftAnim = rightAnim.clone();
     leftAnim.flipHorizontal = true;
     this.animations = {
-      [Keys.Up]: upAnim,
-      [Keys.Right]: rightAnim,
-      [Keys.Down]: downAnim,
-      [Keys.Left]: leftAnim,
+      [SlimeDirection.Up]: upAnim,
+      [SlimeDirection.Right]: rightAnim,
+      [SlimeDirection.Down]: downAnim,
+      [SlimeDirection.Left]: leftAnim,
     };
 
     const rightIdle = sheet.getSprite(0, 1);
     const leftIdle = rightIdle.clone();
     leftIdle.flipHorizontal = true;
     this.idles = {
-      [Keys.Up]: sheet.getSprite(0, 0),
-      [Keys.Right]: rightIdle,
-      [Keys.Down]: sheet.getSprite(0, 2),
-      [Keys.Left]: leftIdle,
+      [SlimeDirection.Up]: sheet.getSprite(0, 0),
+      [SlimeDirection.Right]: rightIdle,
+      [SlimeDirection.Down]: sheet.getSprite(0, 2),
+      [SlimeDirection.Left]: leftIdle,
     };
   }
 
   override onInitialize() {
+    // Apply DNA traits to the slime
+    this.applyDNATraits();
     this.graphics.use(this.idles[this.currentDirection]);
   }
 
-  override onPreUpdate(engine: Engine, elapsedMs: number): void {
-    this.vel = vec(0, 0);
-    this.isSprinting = engine.input.keyboard.isHeld(Keys.Space);
+  private applyDNATraits() {
+    // Apply size based on DNA
+    const size = this.dna.getGeneValue('size');
+    this.scale = vec(size, size);
+    
+    // Apply color tint based on DNA
+    const dnaColor = this.dna.getColor();
+    this.graphics.opacity = 1.0;
+    
+    // Apply color to all animations and idle sprites
+    Object.values(this.animations).forEach(anim => {
+      anim.tint = dnaColor;
+    });
+    
+    Object.values(this.idles).forEach(sprite => {
+      sprite.tint = dnaColor;
+    });
   }
 
-  override onPostUpdate(engine: Engine, elapsedMs: number): void {
-    const velocity = this.isSprinting ? 100 : 50;
-    if (engine.input.keyboard.isHeld(Keys.Up)) {
-      this.currentDirection = Keys.Up;
-      this.vel = vec(0, -velocity);
-    }
-    if (engine.input.keyboard.isHeld(Keys.Right)) {
-      this.currentDirection = Keys.Right;
-      this.vel = vec(velocity, 0);
-    }
-    if (engine.input.keyboard.isHeld(Keys.Down)) {
-      this.currentDirection = Keys.Down;
-      this.vel = vec(0, velocity);
-    }
-    if (engine.input.keyboard.isHeld(Keys.Left)) {
-      this.currentDirection = Keys.Left;
-      this.vel = vec(-velocity, 0);
-    }
-    if (this.vel.x !== 0 || this.vel.y !== 0) {
+  public getDNA(): SlimeDNA {
+    return this.dna;
+  }
+
+  override onPreUpdate(_engine: Engine, _elapsedMs: number): void {
+    // No longer using keyboard input
+  }
+
+  override onPostUpdate(_engine: Engine, _elapsedMs: number): void {
+    // Update animations based on current movement state
+    if (this.isMoving) {
       this.graphics.use(this.animations[this.currentDirection]);
     } else {
       this.graphics.use(this.idles[this.currentDirection]);
     }
   }
 
-  override onPreCollisionResolve(
-    self: Collider,
-    other: Collider,
-    side: Side,
-    contact: CollisionContact
-  ): void {
-    // Called before a collision is resolved, if you want to opt out of this specific collision call contact.cancel()
+  // Method for AI to control slime movement
+  public moveInDirection(direction: SlimeDirection, shouldMove: boolean = true): void {
+    const speedMultiplier = this.dna.getGeneValue('speed');
+    const velocity = this.baseSpeed * speedMultiplier;
+    
+    this.currentDirection = direction;
+    this.isMoving = shouldMove;
+    
+    if (!shouldMove) {
+      this.vel = vec(0, 0);
+      return;
+    }
+    
+    switch (direction) {
+      case SlimeDirection.Up:
+        this.vel = vec(0, -velocity);
+        break;
+      case SlimeDirection.Right:
+        this.vel = vec(velocity, 0);
+        break;
+      case SlimeDirection.Down:
+        this.vel = vec(0, velocity);
+        break;
+      case SlimeDirection.Left:
+        this.vel = vec(-velocity, 0);
+        break;
+    }
+  }
+  
+  // Stop the slime from moving
+  public stopMoving(): void {
+    this.isMoving = false;
+    this.vel = vec(0, 0);
   }
 
-  override onPostCollisionResolve(
-    self: Collider,
-    other: Collider,
-    side: Side,
-    contact: CollisionContact
-  ): void {
-    // Called every time a collision is resolved and overlap is solved
+  // Create a new slime by combining DNA with another slime
+  public reproduce(other: Slime): Slime {
+    const childDNA = SlimeDNA.combine(this.dna, other.getDNA());
+    return new Slime(childDNA);
   }
-
-  override onCollisionStart(
-    self: Collider,
-    other: Collider,
-    side: Side,
-    contact: CollisionContact
-  ): void {
-    // Called when a pair of objects are in contact
+  
+  // Methods for future energy management
+  public getEnergyEfficiency(): number {
+    return this.dna.getGeneValue('energyEfficiency');
   }
-
-  override onCollisionEnd(
-    self: Collider,
-    other: Collider,
-    side: Side,
-    lastContact: CollisionContact
-  ): void {
-    // Called when a pair of objects separates
+  
+  public getSenseRadius(): number {
+    return this.dna.getGeneValue('senseRadius');
   }
 }

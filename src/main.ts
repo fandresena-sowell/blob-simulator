@@ -1,9 +1,16 @@
 import { Color, DisplayMode, Engine, FadeInOut } from "excalibur";
 import { loader } from "./resources";
 import { MyLevel } from "./level";
+import { SlimeTestHarness } from "./debug/test-harness";
+import { Random } from "./utils/random"
+
+// Parse seed from URL for deterministic randomness in testing
+const urlParams = new URLSearchParams(window.location.search);
+const seed = urlParams.get('seed') || String(Math.random());
+Random.init(seed);
+console.log(`Using random seed: ${seed}`);
 
 // Goal is to keep main.ts small and just enough to configure the engine
-
 const game = new Engine({
   width: 800, // Logical width and height in game pixels
   height: 600,
@@ -27,5 +34,7 @@ game.start('start', { // name of the start scene 'start'
     color: Color.ExcaliburBlue
   })
 }).then(() => {
-  // Do something after the game starts
+  // Initialize the test harness after the game starts
+  new SlimeTestHarness(game);
+  console.log('Game started. Press T to toggle the DNA test harness.');
 });

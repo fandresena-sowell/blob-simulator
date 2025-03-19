@@ -7,7 +7,7 @@
 - [x] Setup basic controls (arrow keys for movement, space for sprint)
 
 ## Core Slime Simulation
-- [ ] Implement slime DNA/genetics system (traits like color, size, speed, etc.)
+- [x] Implement slime DNA/genetics system (traits like color, size, speed, etc.)
 - [ ] Add random slime spawning mechanism
 - [ ] Create food resources that slimes can consume
 - [ ] Implement energy system (slimes need to eat to survive)

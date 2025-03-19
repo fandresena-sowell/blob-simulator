@@ -1,4 +1,6 @@
-# Excalibur TypeScript & Vite template
+# Blob Simulator
+
+A simulation game that models an ecosystem of evolving slime creatures. Built with Excalibur.js, TypeScript, and Vite.
 
 Check out the full documentation @ https://excaliburjs.com
 
@@ -15,3 +17,49 @@ npm create excalibur
 3. Run `npm install` to install dependencies
 4. Run `npm run dev` to start the Vite server!
 5. Have fun!
+
+## Features
+
+- Slimes with genetic traits that affect appearance and behavior
+- Random slime generation with DNA-based traits
+- Visual trait expression (color, size, speed)
+- Test harness for visualizing different slime traits (press 'T' in game)
+
+## Testing Framework
+
+This project utilizes a comprehensive testing approach to verify the DNA/genetics system:
+
+### Unit Testing with Jest
+
+Run unit tests with:
+```sh
+yarn test:unit
+```
+
+Unit tests verify:
+- DNA generation and manipulation
+- Trait expression in slimes
+- DNA inheritance and mutation
+- Serialization of genetic information
+
+### Integration Testing with Playwright
+
+Run integration tests with:
+```sh
+yarn test
+```
+
+Playwright tests verify:
+- Visual trait differences between slimes
+- Simulation rendering and functionality
+
+### Visual Testing Harness
+
+A built-in test harness can be activated by pressing 'T' while the game is running. This provides:
+- Visual comparison of slimes with different trait values
+- Side-by-side trait visualization
+- Movement demos to verify speed traits
+
+## Documentation
+
+- DNA trait visual guide: [docs/slime-dna-visual-guide.md](docs/slime-dna-visual-guide.md)
