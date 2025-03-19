@@ -22,6 +22,7 @@ jest.mock('excalibur', () => {
       constructor() {}
       onInitialize() {}
       onPostUpdate() {}
+      on = jest.fn();
     },
     Vector: {
       ...original.Vector,

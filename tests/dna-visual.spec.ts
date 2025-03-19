@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { stabilizeForScreenshot, resumeGameEngine } from './test-helpers';
 
 // Visual verification that slimes have random traits
 test('slimes should have varied appearances', async ({ page }) => {
@@ -9,9 +10,17 @@ test('slimes should have varied appearances', async ({ page }) => {
   await page.click('#excalibur-play');
   
   // Wait for the game to initialize
-  await page.waitForTimeout(2000);
+  await page.waitForTimeout(750);
   
-  // Take screenshot for verification of trait variation
-  await expect(page).toHaveScreenshot('slime-variety.png');
+  // Stabilize the game by pausing the engine and animations before taking the screenshot
+  await stabilizeForScreenshot(page);
+  
+  try {
+    // Take screenshot for verification of trait variation
+    await expect(page).toHaveScreenshot('slime-variety.png');
+  } finally {
+    // Always resume the game engine, even if the screenshot comparison fails
+    await resumeGameEngine(page);
+  }
 });
  

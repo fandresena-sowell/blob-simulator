@@ -12,11 +12,12 @@ import {
   FontUnit,
 } from "excalibur";
 import { Slime } from "./actors/slime";
-import { SlimeSpawner, SpawnConfig } from "./genetics/slime-spawner";
+import { SlimeManager, SpawnConfig } from "./managers/slime-manager";
+import { FoodManager, FoodConfig } from "./managers/food-manager";
 
 export class MyLevel extends Scene {
   private slimes: Slime[] = [];
-  private slimeSpawner!: SlimeSpawner; // Using definite assignment assertion
+  private slimeManager!: SlimeManager; // Using definite assignment assertion
   private spawnConfig: SpawnConfig = {
     initialPopulation: 20,
     spawnRate: 0.2, // 1 slime every 5 seconds
@@ -24,16 +25,32 @@ export class MyLevel extends Scene {
     spawnAreaPadding: 0.1,
   };
   private populationTextActor!: Actor;
+  
+  // Add food management
+  private foodManager!: FoodManager;
+  private foodConfig: FoodConfig = {
+    initialCount: 40,
+    spawnRate: 0.3, // Food per second
+    maxCount: 60,
+    spawnAreaPadding: 0.1,
+    specialFoodChance: 0.05,
+    premiumFoodChance: 0.15,
+  };
+  private foodCountTextActor!: Actor;
 
   override onInitialize(engine: Engine): void {
-    // Initialize the slime spawner
-    this.slimeSpawner = new SlimeSpawner(engine, this.spawnConfig);
+    // Initialize the slime manager
+    this.slimeManager = new SlimeManager(engine, this.spawnConfig);
     
-    // Create population text display
+    // Initialize the food manager
+    this.foodManager = new FoodManager(engine, this.foodConfig);
+    
+    // Create UI displays
     this.createPopulationDisplay();
+    this.createFoodCountDisplay();
     
     // Create initial population of slimes
-    const initialSlimes = this.slimeSpawner.initialize();
+    const initialSlimes = this.slimeManager.initialize();
     
     // Add all initial slimes to the scene
     initialSlimes.forEach(slime => {
@@ -41,8 +58,17 @@ export class MyLevel extends Scene {
       this.add(slime);
     });
     
-    // Update the population text
+    // Create initial food items
+    const initialFood = this.foodManager.initialize();
+    
+    // Add all initial food to the scene
+    initialFood.forEach(food => {
+      this.add(food);
+    });
+    
+    // Update the UI displays
     this.updatePopulationText();
+    this.updateFoodCountText();
   }
 
   /**
@@ -66,6 +92,28 @@ export class MyLevel extends Scene {
     this.populationTextActor.graphics.use(populationText);
     this.add(this.populationTextActor);
   }
+  
+  /**
+   * Create the food count display UI element
+   */
+  private createFoodCountDisplay(): void {
+    const foodCountText = new Text({
+      text: `Food: 0/0`,
+      font: new Font({
+        family: 'Arial',
+        size: 16,
+        unit: FontUnit.Px,
+      }),
+      color: Color.White,
+    });
+    
+    this.foodCountTextActor = new Actor({
+      pos: vec(100, 50), // Position below population text
+    });
+    
+    this.foodCountTextActor.graphics.use(foodCountText);
+    this.add(this.foodCountTextActor);
+  }
 
   override onPreLoad(loader: DefaultLoader): void {
     // Add any scene specific resources to load
@@ -85,7 +133,7 @@ export class MyLevel extends Scene {
 
   override onPostUpdate(engine: Engine, elapsedMs: number): void {
     // Spawn new slimes based on configured spawn rate
-    const newSlimes = this.slimeSpawner.update(elapsedMs);
+    const newSlimes = this.slimeManager.update(elapsedMs);
     
     // Add any new slimes to the scene
     newSlimes.forEach(slime => {
@@ -96,12 +144,22 @@ export class MyLevel extends Scene {
       this.addSpawnEffect(slime);
     });
     
-    // Update the population display if new slimes were added
+    // Update food resources
+    const newFood = this.foodManager.update(elapsedMs);
+    
+    // Add any new food to the scene
+    newFood.forEach(food => {
+      this.add(food);
+    });
+    
+    // Update the UI displays if needed
     if (newSlimes.length > 0) {
       this.updatePopulationText();
     }
     
-    // Future: Implement slime AI behavior
+    if (newFood.length > 0) {
+      this.updateFoodCountText();
+    }
   }
 
   override onPreDraw(ctx: ExcaliburGraphicsContext, elapsedMs: number): void {
@@ -117,7 +175,15 @@ export class MyLevel extends Scene {
    */
   private updatePopulationText(): void {
     const text = this.populationTextActor.graphics.current as Text;
-    text.text = `Slimes: ${this.slimeSpawner.getPopulation()}/${this.spawnConfig.maxPopulation}`;
+    text.text = `Slimes: ${this.slimeManager.getPopulation()}/${this.spawnConfig.maxPopulation}`;
+  }
+  
+  /**
+   * Update the food count text display
+   */
+  private updateFoodCountText(): void {
+    const text = this.foodCountTextActor.graphics.current as Text;
+    text.text = `Food: ${this.foodManager.getFoodCount()}/${this.foodConfig.maxCount}`;
   }
   
   /**
@@ -152,8 +218,8 @@ export class MyLevel extends Scene {
    * Handle the death of a slime
    */
   public removeSlime(slime: Slime): void {
-    // Remove from spawner tracking
-    this.slimeSpawner.removeSlime(slime);
+    // Remove from manager tracking
+    this.slimeManager.removeSlime(slime);
     
     // Remove from our local tracking
     const index = this.slimes.indexOf(slime);

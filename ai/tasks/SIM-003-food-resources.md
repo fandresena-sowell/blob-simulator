@@ -13,29 +13,32 @@ Implement food resources that slimes can consume to gain energy. These resources
 ## Requirements
 - Create a Food actor class that slimes can interact with
 - Implement random food generation throughout the environment
+- Implement random movement for each spawned slime
 - Add collision detection between slimes and food
 - Make food visually distinct and easily identifiable
 - Create a food regeneration/respawn system
 
 ## Init
-- [ ] Read existing documentation and acknowledge the project
-- [ ] Understand the current slime implementation and collision system
+- [x] Read existing documentation and acknowledge the project
+- [x] Understand the current slime implementation and collision system
 
 ## Implementation Steps
-- [ ] Create a `Food` class that extends Actor
-- [ ] Implement food appearance (sprite or simple shape with appropriate color)
-- [ ] Add collision detection with the slime actor
-- [ ] Implement a method for slimes to consume food (to be called on collision)
-- [ ] Add food nutritional value property (energy contained)
-- [ ] Create a FoodManager class to handle food spawning and lifecycle
-- [ ] Implement random food distribution across the level
-- [ ] Add food respawn mechanism with configurable rate
-- [ ] Create different food types with varying nutritional values (optional)
-- [ ] Add visual effects for food consumption
+- [x] Create a `Food` class that extends Actor
+- [x] Implement food appearance (sprite or simple shape with appropriate color)
+- [x] Add random movement for each slime actor
+- [x] Add collision detection with the slime actor
+- [x] Implement a method for slimes to consume food (to be called on collision)
+- [x] Add food nutritional value property (energy contained)
+- [x] Create a FoodManager class to handle food spawning and lifecycle
+- [x] Implement random food distribution across the level
+- [x] Add food respawn mechanism with configurable rate
+- [x] Create different food types with varying nutritional values (optional)
+- [x] Add visual effects for food consumption
 - [ ] Implement food growth/decay over time (optional)
 
 ## Success Criteria
 - Food resources spawn randomly throughout the environment
+- Slimes moves randomly inside the environment bound
 - Slimes can collide with and consume food
 - Food respawns at a configurable rate
 - Food is visually distinct and easily identifiable
@@ -51,18 +54,18 @@ Implement food resources that slimes can consume to gain energy. These resources
 - Consider implementing food that grows over time or spreads to nearby areas
 
 ## Post-process
-- [ ] Update project documentation to reflect the changes made
-- [ ] Document the food system design and parameters
+- [x] Update project documentation to reflect the changes made
+- [x] Document the food system design and parameters
 
 ## Verification Checklist
-- [ ] All implementation steps completed
-- [ ] All success criteria met
-- [ ] Food system thoroughly tested with various parameters
-- [ ] Task fully addresses all requirements
-- [ ] No regression in existing functionality
-- [ ] Implementation thoroughly tested
-- [ ] Documentation updated as needed
+- [x] All implementation steps completed
+- [x] All success criteria met
+- [x] Food system thoroughly tested with various parameters
+- [x] Task fully addresses all requirements
+- [x] No regression in existing functionality
+- [x] Implementation thoroughly tested
+- [x] Documentation updated as needed
 
 ## Final Steps
-- [ ] Mark the task as completed in TODO.md
-- [ ] Commit the changes with a conventional commit message format 
+- [x] Mark the task as completed in TODO.md
+- [x] Commit the changes with a conventional commit message format 

@@ -10,11 +10,18 @@ const seed = urlParams.get('seed') || String(Math.random());
 Random.init(seed);
 console.log(`Using random seed: ${seed}`);
 
+// Declare global interface for TypeScript
+declare global {
+  interface Window {
+    blobSimGame?: Engine;
+  }
+}
+
 // Goal is to keep main.ts small and just enough to configure the engine
 const game = new Engine({
-  width: 800, // Logical width and height in game pixels
-  height: 600,
-  displayMode: DisplayMode.FitScreenAndFill, // Display mode tells excalibur how to fill the window
+  width: 1280, // Logical width and height in game pixels
+  height: 800,
+  displayMode: DisplayMode.Fixed, // Display mode tells excalibur how to fill the window
   pixelArt: true, // pixelArt will turn on the correct settings to render pixel art without jaggies or shimmering artifacts
   scenes: {
     start: MyLevel
@@ -25,6 +32,9 @@ const game = new Engine({
   // },
   // fixedUpdateTimestep: 16 // Turn on fixed update timestep when consistent physic simulation is important
 });
+
+// Expose the game engine globally for testing
+window.blobSimGame = game;
 
 game.start('start', { // name of the start scene 'start'
   loader, // Optional loader (but needed for loading images/sounds)

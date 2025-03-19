@@ -1,6 +1,10 @@
+/**
+ * Slime Manager for the blob simulation.
+ * This module handles spawning and lifecycle of slimes in the ecosystem.
+ */
 import { Engine, vec } from "excalibur";
 import { Slime } from "../actors/slime";
-import { SlimeDNA } from "./slime-dna";
+import { SlimeDNA } from "../genetics/slime-dna";
 import { Random } from "../utils/random";
 
 export interface SpawnConfig {
@@ -10,7 +14,7 @@ export interface SpawnConfig {
   spawnAreaPadding: number; // Percentage of screen edges to avoid (0-0.5)
 }
 
-export class SlimeSpawner {
+export class SlimeManager {
   private engine: Engine;
   private slimes: Slime[] = [];
   private config: SpawnConfig;
@@ -27,7 +31,7 @@ export class SlimeSpawner {
   }
   
   /**
-   * Initialize the spawner by creating the initial population
+   * Initialize the manager by creating the initial population
    * @returns Array of created slimes to be added to the scene
    */
   public initialize(): Slime[] {
@@ -53,7 +57,6 @@ export class SlimeSpawner {
   public update(elapsedMs: number): Slime[] {
     const newSlimes: Slime[] = [];
     
-
     if (this.slimes.length < this.config.maxPopulation) {
       this.timeSinceLastSpawn += elapsedMs;
       
@@ -74,7 +77,7 @@ export class SlimeSpawner {
   }
   
   /**
-   * Remove a slime from the spawner tracking
+   * Remove a slime from the manager tracking
    * @param slime The slime to remove
    */
   public removeSlime(slime: Slime): void {
@@ -157,7 +160,7 @@ export class SlimeSpawner {
   }
   
   /**
-   * Update slime spawner configuration
+   * Update slime manager configuration
    * @param config New configuration (partial)
    */
   public updateConfig(config: Partial<SpawnConfig>): void {

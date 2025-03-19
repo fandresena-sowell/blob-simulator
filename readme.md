@@ -26,6 +26,10 @@ npm create excalibur
 - Automatic slime spawning with configurable parameters
 - Population management and growth visualization
 - Test harness for visualizing different slime traits (press 'T' in game)
+- Food resources with different types and nutritional values
+- Random slime movement with boundary detection
+- Energy system where slimes consume food to gain energy
+- Food respawning with configurable parameters
 
 ## Testing Framework
 
@@ -65,7 +69,8 @@ A built-in test harness can be activated by pressing 'T' while the game is runni
 ## Documentation
 
 - DNA trait visual guide: [docs/slime-dna-visual-guide.md](docs/slime-dna-visual-guide.md)
-- Slime spawning system: [docs/slime-spawner.md](docs/slime-spawner.md)
+- Slime manager system: [docs/slime-manager.md](docs/slime-manager.md)
+- Food system: [docs/food-system.md](docs/food-system.md)
 
 ## Configuration
 
@@ -84,4 +89,21 @@ private spawnConfig: SpawnConfig = {
 };
 ```
 
-See [docs/slime-spawner.md](docs/slime-spawner.md) for more details on the spawning system.
+See [docs/slime-manager.md](docs/slime-manager.md) for more details on the spawning system.
+
+### Food System Configuration
+
+The food system can be customized by modifying the `foodConfig` in `src/level.ts`:
+
+```typescript
+private foodConfig: FoodConfig = {
+  initialCount: 40,        // Initial number of food items
+  spawnRate: 0.3,          // Food per second
+  maxCount: 60,            // Maximum number of food items
+  spawnAreaPadding: 0.1,   // % of screen edges to avoid when spawning
+  specialFoodChance: 0.05, // 5% chance for high-value food
+  premiumFoodChance: 0.15, // 15% chance for medium-value food
+};
+```
+
+See [docs/food-system.md](docs/food-system.md) for more details on the food system implementation.

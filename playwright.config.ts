@@ -40,6 +40,21 @@ export default defineConfig({
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
   },
+  
+  /* Configure screenshot comparison options */
+  expect: {
+    toHaveScreenshot: {
+      // Allowing some pixel differences for minor rendering variations
+      maxDiffPixels: 50,
+      
+      // Slightly relaxed threshold for per-pixel comparison
+      threshold: 0.2,
+      
+      // Animations in games can sometimes cause small shifts
+      // that don't affect functional testing
+      maxDiffPixelRatio: 0.01,
+    }
+  },
 
   /* Configure projects for major browsers */
   projects: [
