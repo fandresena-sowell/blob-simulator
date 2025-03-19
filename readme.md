@@ -18,6 +18,26 @@ npm create excalibur
 4. Run `npm run dev` to start the Vite server!
 5. Have fun!
 
+## Online Demo
+
+You can view the live version of this project on GitHub Pages at:
+https://[your-username].github.io/blob-simulator
+
+## GitHub Pages Deployment
+
+This project is configured to automatically deploy to GitHub Pages when changes are pushed to the main branch. The deployment is handled by a GitHub Action workflow.
+
+To set up GitHub Pages for this repository:
+
+1. Go to your repository on GitHub
+2. Navigate to Settings -> Pages
+3. Under "Build and deployment" section, select "GitHub Actions" as the source
+4. Push changes to the main branch to trigger a deployment
+
+The GitHub Action workflow will:
+- Build the project using Vite
+- Deploy the built files to GitHub Pages
+
 ## Features
 
 - Slimes with genetic traits that affect appearance and behavior
