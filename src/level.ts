@@ -1,11 +1,11 @@
 import { DefaultLoader, Engine, ExcaliburGraphicsContext, Scene, SceneActivationContext } from "excalibur";
-import { Player } from "./player";
+import { Slime } from "./actors/slime";
 
 export class MyLevel extends Scene {
     override onInitialize(engine: Engine): void {
         // Scene.onInitialize is where we recommend you perform the composition for your game
-        const player = new Player();
-        this.add(player); // Actors need to be added to a scene to be drawn
+        const slime = new Slime();
+        this.add(slime); // Actors need to be added to a scene to be drawn
     }
 
     override onPreLoad(loader: DefaultLoader): void {
