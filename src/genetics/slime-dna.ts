@@ -35,8 +35,8 @@ export class SlimeDNA {
       },
       energyEfficiency: {
         name: 'Energy Efficiency',
-        value: genes?.energyEfficiency?.value ?? this.randomGeneValue(1.0, 0.2, 0.5, 1.5),
-        min: 0.5,
+        value: genes?.energyEfficiency?.value ?? this.randomGeneValue(1.25, 0.2, 1, 1.5),
+        min: 1,
         max: 1.5
       },
       color: {

@@ -156,6 +156,9 @@ export class SlimeManager {
     slime.pos = vec(position.x, position.y);
     slime.stopMoving(); // Slimes start idle
     
+    // Set death callback
+    slime.setDeathCallback(this.removeSlime.bind(this));
+    
     return slime;
   }
   

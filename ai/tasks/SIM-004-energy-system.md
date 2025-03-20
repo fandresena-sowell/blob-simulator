@@ -18,20 +18,20 @@ Implement an energy system for slimes where they need to consume food to survive
 - Implement slime death when energy is completely depleted
 
 ## Init
-- [ ] Read existing documentation and acknowledge the project
-- [ ] Review slime DNA and food resource implementations
+- [x] Read existing documentation and acknowledge the project
+- [x] Review slime DNA and food resource implementations
 
 ## Implementation Steps
-- [ ] Add energy property to the Slime class with maximum and current values
-- [ ] Implement energy depletion over time (passive energy burn)
-- [ ] Make movement and actions consume energy at appropriate rates
-- [ ] Modify slime code to consume food and convert it to energy
-- [ ] Add energy efficiency as a genetic trait in the DNA system
-- [ ] Implement visual indicators of slime energy levels (color saturation, size, etc.)
-- [ ] Add death functionality when energy is completely depleted
-- [ ] Create energy consumption modifiers based on slime activities
-- [ ] Implement different movement modes that use energy differently (sprint uses more)
-- [ ] Add optional "hunger" behavior that increases when energy is low
+- [x] Add energy property to the Slime class with maximum and current values
+- [x] Implement energy depletion over time (passive energy burn)
+- [x] Make movement and actions consume energy at appropriate rates
+- [x] Modify slime code to consume food and convert it to energy
+- [x] Add energy efficiency as a genetic trait in the DNA system
+- [x] Implement visual indicators of slime energy levels (energy bar)
+- [x] Add death functionality when energy is completely depleted
+- [x] Create energy consumption modifiers based on slime activities
+- [x] Implement different movement modes that use energy differently (sprint uses more)
+- [x] Add optional "hunger" behavior that increases when energy is low
 
 ## Success Criteria
 - Slimes consume energy over time and through actions
@@ -52,18 +52,18 @@ Implement an energy system for slimes where they need to consume food to survive
 - Consider environmental factors that might affect energy consumption (future feature)
 
 ## Post-process
-- [ ] Update project documentation to reflect the changes made
-- [ ] Document the energy system parameters and balance
+- [x] Update project documentation to reflect the changes made
+- [x] Document the energy system parameters and balance
 
 ## Verification Checklist
-- [ ] All implementation steps completed
-- [ ] All success criteria met
-- [ ] Energy system thoroughly tested with various parameters
-- [ ] Task fully addresses all requirements
-- [ ] No regression in existing functionality
-- [ ] Implementation thoroughly tested
-- [ ] Documentation updated as needed
+- [x] All implementation steps completed
+- [x] All success criteria met
+- [x] Energy system thoroughly tested with various parameters
+- [x] Task fully addresses all requirements
+- [x] No regression in existing functionality
+- [x] Implementation thoroughly tested
+- [x] Documentation updated as needed
 
 ## Final Steps
-- [ ] Mark the task as completed in TODO.md
-- [ ] Commit the changes with a conventional commit message format 
+- [x] Mark the task as completed in TODO.md
+- [x] Commit the changes with a conventional commit message format 

@@ -40,6 +40,7 @@ jest.mock('../../src/actors/slime', () => {
         this.stopMoving();
       }
       getDNA = jest.fn().mockReturnValue({});
+      setDeathCallback = jest.fn();
     }
   };
 });

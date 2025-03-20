@@ -10,6 +10,7 @@ import {
   Actor,
   Font,
   FontUnit,
+  Keys,
 } from "excalibur";
 import { Slime } from "./actors/slime";
 import { SlimeManager, SpawnConfig } from "./managers/slime-manager";
@@ -30,7 +31,7 @@ export class MyLevel extends Scene {
   private foodManager!: FoodManager;
   private foodConfig: FoodConfig = {
     initialCount: 40,
-    spawnRate: 0.3, // Food per second
+    spawnRate: 2, // Food per second
     maxCount: 60,
     spawnAreaPadding: 0.1,
     specialFoodChance: 0.05,
@@ -69,6 +70,9 @@ export class MyLevel extends Scene {
     // Update the UI displays
     this.updatePopulationText();
     this.updateFoodCountText();
+    
+    // Set up input handling for sprint mode
+    this.setupInputHandling(engine);
   }
 
   /**
@@ -232,5 +236,20 @@ export class MyLevel extends Scene {
     
     // Update the population display
     this.updatePopulationText();
+  }
+
+  /**
+   * Setup input handling for the simulation
+   */
+  private setupInputHandling(engine: Engine): void {
+    // Space key for sprint
+    engine.input.keyboard.on('press', (evt) => {
+      if (evt.key === Keys.Space) {
+        // Toggle sprint mode for all slimes
+        this.slimeManager.getSlimes().forEach(slime => {
+          slime.toggleSprint();
+        });
+      }
+    });
   }
 }
